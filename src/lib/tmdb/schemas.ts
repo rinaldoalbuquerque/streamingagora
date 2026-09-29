@@ -31,3 +31,46 @@ export const rawProviderSchema = z.object({
 export type RawProvider = z.infer<typeof rawProviderSchema>;
 
 export const rawProvidersListSchema = z.object({ results: z.array(z.unknown()) });
+
+const optionalItems = z.array(z.unknown()).optional();
+
+export const rawRegionProvidersSchema = z.object({
+  link: z.string().optional(),
+  flatrate: optionalItems,
+  free: optionalItems,
+  ads: optionalItems,
+  rent: optionalItems,
+  buy: optionalItems,
+});
+
+export const rawWatchProvidersSchema = z.object({
+  results: z.record(z.string(), z.unknown()).optional(),
+});
+export type RawWatchProviders = z.infer<typeof rawWatchProvidersSchema>;
+
+export const rawCastSchema = z.object({
+  id: z.number().int(),
+  name: z.string(),
+  character: z.string().nullable().optional(),
+  profile_path: z.string().nullable().optional(),
+});
+export type RawCast = z.infer<typeof rawCastSchema>;
+
+export const rawVideoSchema = z.object({
+  key: z.string(),
+  site: z.string(),
+  type: z.string(),
+  iso_639_1: z.string().optional(),
+});
+export type RawVideo = z.infer<typeof rawVideoSchema>;
+
+export const rawMovieDetailsSchema = rawMovieSchema.extend({
+  runtime: z.number().nullable().optional(),
+  tagline: z.string().nullable().optional(),
+  backdrop_path: z.string().nullable().optional(),
+  genres: z.array(z.object({ id: z.number().int(), name: z.string() })).optional(),
+  credits: z.object({ cast: z.array(z.unknown()) }).optional(),
+  videos: z.object({ results: z.array(z.unknown()) }).optional(),
+  'watch/providers': rawWatchProvidersSchema.optional(),
+});
+export type RawMovieDetails = z.infer<typeof rawMovieDetailsSchema>;

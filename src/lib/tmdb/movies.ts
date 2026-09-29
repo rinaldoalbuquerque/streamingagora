@@ -1,9 +1,9 @@
 import 'server-only';
 import type { SortOption } from '@/lib/filters/catalog-filters';
 import { REVALIDATE, tmdbFetch } from './client';
-import { toMovie, toPaginated } from './mappers';
-import { rawMovieSchema } from './schemas';
-import type { Movie, Paginated } from './types';
+import { parseOrThrow, toMovie, toMovieDetails, toPaginated, toWatchProviders } from './mappers';
+import { rawMovieDetailsSchema, rawMovieSchema, rawWatchProvidersSchema } from './schemas';
+import type { Movie, MovieDetails, Paginated, WatchProviders } from './types';
 
 export const MONETIZATION_TYPES = 'flatrate|free|ads';
 export const MIN_VOTE_COUNT = 50;
@@ -42,4 +42,20 @@ export async function searchMovies(query: string, page: number): Promise<Paginat
     params: { query, region: 'BR', include_adult: 'false', page },
   });
   return toPaginated(raw, rawMovieSchema, toMovie, 'search/movie');
+}
+
+export async function getMovieDetails(id: number): Promise<MovieDetails> {
+  const raw = await tmdbFetch(`/movie/${id}`, {
+    revalidate: REVALIDATE.details,
+    params: {
+      append_to_response: 'credits,videos,watch/providers',
+      include_video_language: 'pt,en',
+    },
+  });
+  return toMovieDetails(parseOrThrow(rawMovieDetailsSchema, raw, `movie/${id}`));
+}
+
+export async function getMovieWatchProviders(id: number): Promise<WatchProviders> {
+  const raw = await tmdbFetch(`/movie/${id}/watch/providers`, { revalidate: REVALIDATE.details });
+  return toWatchProviders(parseOrThrow(rawWatchProvidersSchema, raw, `movie/${id}/watch/providers`));
 }
