@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
+import { ListButtons } from '@/components/list-buttons';
 import { Badge } from '@/components/ui/badge';
 import { WatchProvidersSection } from '@/components/watch-providers-section';
 import { formatRating, formatRuntime } from '@/lib/format';
@@ -9,6 +10,8 @@ import { TmdbNotFoundError } from '@/lib/tmdb/client';
 import { tmdbImageUrl } from '@/lib/tmdb/images';
 import { getMovieDetails } from '@/lib/tmdb/movies';
 import type { MovieDetails } from '@/lib/tmdb/types';
+import { getMovieStatus } from '@/lib/user-data/repository';
+import { getUserDb } from '@/lib/user-data/server';
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -30,6 +33,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function MoviePage({ params }: PageProps) {
   const movie = await loadMovie((await params).id);
+  const ctx = await getUserDb();
+  const status = ctx ? await getMovieStatus(ctx.db, ctx.userId, movie.id) : null;
   const poster = tmdbImageUrl(movie.posterPath, 'w500');
   const meta = [movie.releaseYear, formatRuntime(movie.runtime), `★ ${formatRating(movie.voteAverage)}`]
     .filter(Boolean)
@@ -56,6 +61,12 @@ export default async function MoviePage({ params }: PageProps) {
             ))}
           </div>
         </header>
+
+        <ListButtons
+          movie={{ tmdbId: movie.id, title: movie.title, posterPath: movie.posterPath }}
+          initialStatus={status}
+          isLoggedIn={ctx !== null}
+        />
 
         <WatchProvidersSection providers={movie.watchProviders} />
 
