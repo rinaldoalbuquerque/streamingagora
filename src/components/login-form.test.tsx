@@ -6,7 +6,7 @@ import { LoginForm } from './login-form';
 const { replace, refresh, auth } = vi.hoisted(() => ({
   replace: vi.fn(),
   refresh: vi.fn(),
-  auth: { signInWithPassword: vi.fn(), signUp: vi.fn(), signInWithOAuth: vi.fn() },
+  auth: { signInWithPassword: vi.fn(), signUp: vi.fn() },
 }));
 vi.mock('next/navigation', () => ({ useRouter: () => ({ replace, refresh }) }));
 vi.mock('@/lib/supabase/client', () => ({ createSupabaseBrowserClient: () => ({ auth }) }));
@@ -48,13 +48,8 @@ describe('LoginForm', () => {
     expect(await screen.findByRole('status')).toHaveTextContent('Enviamos um link de confirmação para o seu e-mail.');
   });
 
-  it('Google usa o callback com o destino', async () => {
-    auth.signInWithOAuth.mockResolvedValueOnce({ error: null });
-    render(<LoginForm next="/perfil" />);
-    await userEvent.click(screen.getByRole('button', { name: 'Continuar com Google' }));
-    expect(auth.signInWithOAuth).toHaveBeenCalledWith({
-      provider: 'google',
-      options: { redirectTo: 'http://localhost:3000/auth/callback?next=%2Fperfil' },
-    });
+  it('não oferece login com Google', () => {
+    render(<LoginForm next="/" />);
+    expect(screen.queryByRole('button', { name: /google/i })).not.toBeInTheDocument();
   });
 });

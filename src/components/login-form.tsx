@@ -52,15 +52,6 @@ export function LoginForm({ next }: { next: string }) {
     router.refresh();
   }
 
-  async function handleGoogle() {
-    setError(null);
-    const { error: authError } = await createSupabaseBrowserClient().auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: callbackUrl() },
-    });
-    if (authError) setError(authErrorMessage(authError.message));
-  }
-
   function switchMode() {
     setMode(mode === 'signin' ? 'signup' : 'signin');
     setError(null);
@@ -111,9 +102,6 @@ export function LoginForm({ next }: { next: string }) {
           {mode === 'signin' ? 'Entrar' : 'Criar conta'}
         </Button>
       </form>
-      <Button type="button" variant="outline" className="h-10 w-full" onClick={handleGoogle}>
-        Continuar com Google
-      </Button>
       <p className="text-center text-sm">
         {mode === 'signin' ? 'Ainda não tem conta? ' : 'Já tem conta? '}
         <button type="button" className="underline" onClick={switchMode}>
