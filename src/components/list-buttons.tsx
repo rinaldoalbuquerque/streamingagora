@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { removeMovieAction, setMovieStatusAction } from '@/lib/user-data/actions';
 import type { MovieRef, MovieStatus } from '@/lib/user-data/schemas';
 
+const buttonClass = 'h-11 px-5 text-sm font-semibold';
+
 interface ListButtonsProps {
   movie: MovieRef;
   initialStatus: MovieStatus | null;
@@ -27,7 +29,10 @@ export function ListButtons({ movie, initialStatus, isLoggedIn }: ListButtonsPro
     }
     startTransition(async () => {
       setOptimisticStatus(next);
-      const result = next === null ? await removeMovieAction(movie.tmdbId) : await setMovieStatusAction(movie, next);
+      const result =
+        next === null
+          ? await removeMovieAction(movie.tmdbId)
+          : await setMovieStatusAction(movie, next);
       if (result.ok) setStatus(next);
       else toast.error(result.error);
     });
@@ -37,18 +42,20 @@ export function ListButtons({ movie, initialStatus, isLoggedIn }: ListButtonsPro
   const isWatched = optimisticStatus === 'watched';
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-3">
       <Button
-        variant={isWant ? 'default' : 'outline'}
+        variant={isWant ? 'default' : 'secondary'}
         aria-pressed={isWant}
+        className={buttonClass}
         disabled={isPending}
         onClick={() => change(isWant ? null : 'want')}
       >
         {isWant ? '✓ Na lista' : '+ Quero assistir'}
       </Button>
       <Button
-        variant={isWatched ? 'default' : 'outline'}
+        variant={isWatched ? 'default' : 'secondary'}
         aria-pressed={isWatched}
+        className={buttonClass}
         disabled={isPending}
         onClick={() => change(isWatched ? null : 'watched')}
       >

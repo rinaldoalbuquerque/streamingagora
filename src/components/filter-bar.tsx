@@ -21,7 +21,8 @@ const SORT_LABELS: Record<SortOption, string> = {
   'primary_release_date.desc': 'Lançamentos recentes',
 };
 const RATING_OPTIONS = [5, 6, 7, 8, 9];
-const selectClass = 'h-9 rounded-md border bg-background px-2';
+const selectClass =
+  'h-10 min-w-36 rounded-md border border-input bg-card px-3 text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40';
 
 interface FilterBarProps {
   filters: CatalogFilters;
@@ -35,7 +36,13 @@ function toNumberOrNull(value: string): number | null {
   return value === '' ? null : Number(value);
 }
 
-export function FilterBar({ filters, genres, providers, selectedProviderIds, canHideWatched }: FilterBarProps) {
+export function FilterBar({
+  filters,
+  genres,
+  providers,
+  selectedProviderIds,
+  canHideWatched,
+}: FilterBarProps) {
   const router = useRouter();
   const maxYear = new Date().getFullYear() + 1;
   const years = Array.from({ length: maxYear - MIN_YEAR + 1 }, (_, i) => maxYear - i);
@@ -52,7 +59,7 @@ export function FilterBar({ filters, genres, providers, selectedProviderIds, can
   }
 
   return (
-    <section aria-label="Filtros" className="mb-6 space-y-4">
+    <section aria-label="Filtros" className="mb-8 space-y-5">
       <div className="flex flex-wrap gap-2">
         {providers.map((provider) => {
           const logo = tmdbImageUrl(provider.logoPath, 'w92');
@@ -64,11 +71,13 @@ export function FilterBar({ filters, genres, providers, selectedProviderIds, can
               aria-pressed={active}
               onClick={() => toggleProvider(provider.id)}
               className={cn(
-                'flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition-colors',
-                active ? 'border-primary bg-primary text-primary-foreground' : 'hover:bg-muted',
+                'flex items-center gap-2 rounded-full border py-1 pr-3.5 pl-1 text-sm transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/60',
+                active
+                  ? 'border-primary bg-primary font-medium text-primary-foreground'
+                  : 'border-input text-foreground/85 hover:border-foreground/40 hover:text-foreground',
               )}
             >
-              {logo && <Image src={logo} alt="" width={20} height={20} className="rounded" />}
+              {logo && <Image src={logo} alt="" width={24} height={24} className="rounded-full" />}
               <span>{provider.name}</span>
             </button>
           );
@@ -77,7 +86,9 @@ export function FilterBar({ filters, genres, providers, selectedProviderIds, can
 
       <div className="flex flex-wrap items-end gap-4 text-sm">
         <div className="flex flex-col gap-1">
-          <label htmlFor="filtro-genero">Gênero</label>
+          <label htmlFor="filtro-genero" className="text-muted-foreground">
+            Gênero
+          </label>
           <select
             id="filtro-genero"
             className={selectClass}
@@ -86,13 +97,17 @@ export function FilterBar({ filters, genres, providers, selectedProviderIds, can
           >
             <option value="">Todos</option>
             {genres.map((g) => (
-              <option key={g.id} value={g.id}>{g.name}</option>
+              <option key={g.id} value={g.id}>
+                {g.name}
+              </option>
             ))}
           </select>
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="filtro-ano">Ano</label>
+          <label htmlFor="filtro-ano" className="text-muted-foreground">
+            Ano
+          </label>
           <select
             id="filtro-ano"
             className={selectClass}
@@ -101,13 +116,17 @@ export function FilterBar({ filters, genres, providers, selectedProviderIds, can
           >
             <option value="">Qualquer</option>
             {years.map((y) => (
-              <option key={y} value={y}>{y}</option>
+              <option key={y} value={y}>
+                {y}
+              </option>
             ))}
           </select>
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="filtro-nota">Nota mínima</label>
+          <label htmlFor="filtro-nota" className="text-muted-foreground">
+            Nota mínima
+          </label>
           <select
             id="filtro-nota"
             className={selectClass}
@@ -116,13 +135,17 @@ export function FilterBar({ filters, genres, providers, selectedProviderIds, can
           >
             <option value="">Qualquer</option>
             {RATING_OPTIONS.map((r) => (
-              <option key={r} value={r}>{r}+</option>
+              <option key={r} value={r}>
+                {r}+
+              </option>
             ))}
           </select>
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="filtro-ordem">Ordenar por</label>
+          <label htmlFor="filtro-ordem" className="text-muted-foreground">
+            Ordenar por
+          </label>
           <select
             id="filtro-ordem"
             className={selectClass}
@@ -130,16 +153,19 @@ export function FilterBar({ filters, genres, providers, selectedProviderIds, can
             onChange={(e) => apply({ sort: e.target.value as SortOption })}
           >
             {SORT_OPTIONS.map((s) => (
-              <option key={s} value={s}>{SORT_LABELS[s]}</option>
+              <option key={s} value={s}>
+                {SORT_LABELS[s]}
+              </option>
             ))}
           </select>
         </div>
 
         {canHideWatched && (
-          <div className="flex h-9 items-center gap-2">
+          <div className="flex h-10 items-center gap-2">
             <input
               id="filtro-assistidos"
               type="checkbox"
+              className="size-4 accent-primary"
               checked={filters.hideWatched}
               onChange={(e) => apply({ hideWatched: e.target.checked })}
             />
@@ -147,7 +173,12 @@ export function FilterBar({ filters, genres, providers, selectedProviderIds, can
           </div>
         )}
 
-        <Button type="button" variant="ghost" onClick={() => router.push(catalogHref(DEFAULT_FILTERS))}>
+        <Button
+          type="button"
+          variant="ghost"
+          className="h-10 px-3"
+          onClick={() => router.push(catalogHref(DEFAULT_FILTERS))}
+        >
           Limpar filtros
         </Button>
       </div>

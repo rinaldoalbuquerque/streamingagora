@@ -4,6 +4,7 @@ export const rawMovieSchema = z.object({
   id: z.number().int(),
   title: z.string(),
   poster_path: z.string().nullable().optional(),
+  backdrop_path: z.string().nullable().optional(),
   release_date: z.string().optional(),
   vote_average: z.number().optional(),
   overview: z.string().optional(),
@@ -67,7 +68,6 @@ export type RawVideo = z.infer<typeof rawVideoSchema>;
 export const rawMovieDetailsSchema = rawMovieSchema.extend({
   runtime: z.number().nullable().optional(),
   tagline: z.string().nullable().optional(),
-  backdrop_path: z.string().nullable().optional(),
   genres: z.array(z.object({ id: z.number().int(), name: z.string() })).optional(),
   credits: z.object({ cast: z.array(z.unknown()) }).optional(),
   videos: z.object({ results: z.array(z.unknown()) }).optional(),

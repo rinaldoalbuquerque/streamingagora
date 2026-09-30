@@ -15,14 +15,16 @@ export default async function LoginPage({ searchParams }: PageProps) {
   if (await getCurrentUser()) redirect(nextPath);
 
   return (
-    <div className="mx-auto max-w-sm py-8">
-      <h1 className="mb-6 text-2xl font-bold">Entrar</h1>
-      {erro === 'callback' && (
-        <p role="alert" className="mb-4 text-sm text-destructive">
-          Não foi possível concluir o login. Tente novamente.
-        </p>
-      )}
-      <LoginForm next={nextPath} />
+    <div className="page-shell flex justify-center">
+      <div className="w-full max-w-sm rounded-lg bg-card p-6 sm:p-8">
+        <h1 className="page-title mb-6">Entrar</h1>
+        {erro === 'callback' && (
+          <p role="alert" className="mb-4 text-sm text-destructive">
+            Não foi possível concluir o login. Tente novamente.
+          </p>
+        )}
+        <LoginForm next={nextPath} />
+      </div>
     </div>
   );
 }

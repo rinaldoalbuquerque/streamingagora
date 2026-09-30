@@ -33,7 +33,11 @@ export function LoginForm({ next }: { next: string }) {
     const { data, error: authError } =
       mode === 'signin'
         ? await supabase.auth.signInWithPassword({ email, password })
-        : await supabase.auth.signUp({ email, password, options: { emailRedirectTo: callbackUrl() } });
+        : await supabase.auth.signUp({
+            email,
+            password,
+            options: { emailRedirectTo: callbackUrl() },
+          });
     setPending(false);
 
     if (authError) {
@@ -67,27 +71,47 @@ export function LoginForm({ next }: { next: string }) {
     <div className="space-y-4">
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="space-y-1">
-          <label htmlFor="email" className="text-sm font-medium">E-mail</label>
-          <Input id="email" name="email" type="email" required autoComplete="email" />
+          <label htmlFor="email" className="text-sm font-medium">
+            E-mail
+          </label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            className="h-10"
+          />
         </div>
         <div className="space-y-1">
-          <label htmlFor="password" className="text-sm font-medium">Senha</label>
+          <label htmlFor="password" className="text-sm font-medium">
+            Senha
+          </label>
           <Input
             id="password"
             name="password"
             type="password"
+            className="h-10"
             required
             minLength={6}
             autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
           />
         </div>
-        {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
-        {info && <p role="status" className="text-sm">{info}</p>}
-        <Button type="submit" className="w-full" disabled={pending}>
+        {error && (
+          <p role="alert" className="text-sm text-destructive">
+            {error}
+          </p>
+        )}
+        {info && (
+          <p role="status" className="text-sm">
+            {info}
+          </p>
+        )}
+        <Button type="submit" className="h-10 w-full font-semibold" disabled={pending}>
           {mode === 'signin' ? 'Entrar' : 'Criar conta'}
         </Button>
       </form>
-      <Button type="button" variant="outline" className="w-full" onClick={handleGoogle}>
+      <Button type="button" variant="outline" className="h-10 w-full" onClick={handleGoogle}>
         Continuar com Google
       </Button>
       <p className="text-center text-sm">

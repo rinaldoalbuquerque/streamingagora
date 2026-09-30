@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { MovieGrid } from '@/components/movie-grid';
 import { Pagination } from '@/components/pagination';
+import { SearchForm } from '@/components/search-form';
 import { parsePageParam, type RawSearchParams } from '@/lib/filters/catalog-filters';
 import { normalizeQuery, searchHref } from '@/lib/search/normalize-query';
 import { searchMovies } from '@/lib/tmdb/movies';
@@ -18,10 +19,10 @@ export default async function SearchPage({ searchParams }: PageProps) {
 
   if (!query) {
     return (
-      <>
-        <h1 className="mb-4 text-2xl font-bold">Buscar filmes</h1>
-        <p className="text-muted-foreground">Digite o nome de um filme na busca acima.</p>
-      </>
+      <div className="page-shell">
+        <h1 className="page-title">Buscar filmes</h1>
+        <SearchForm />
+      </div>
     );
   }
 
@@ -29,10 +30,18 @@ export default async function SearchPage({ searchParams }: PageProps) {
   const result = await searchMovies(query, page);
 
   return (
-    <>
-      <h1 className="mb-4 text-2xl font-bold">Resultados para &quot;{query}&quot;</h1>
-      <MovieGrid movies={result.results} emptyMessage={`Nenhum filme encontrado para "${query}".`} />
-      <Pagination page={page} totalPages={result.totalPages} hrefForPage={(p) => searchHref(query, p)} />
-    </>
+    <div className="page-shell">
+      <p className="text-sm text-muted-foreground">Resultados para</p>
+      <h1 className="page-title mt-1 mb-8">{query}</h1>
+      <MovieGrid
+        movies={result.results}
+        emptyMessage={`Nenhum filme encontrado para "${query}".`}
+      />
+      <Pagination
+        page={page}
+        totalPages={result.totalPages}
+        hrefForPage={(p) => searchHref(query, p)}
+      />
+    </div>
   );
 }

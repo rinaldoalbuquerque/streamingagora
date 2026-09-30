@@ -13,15 +13,17 @@ const disabledClass = cn(buttonVariants({ variant: 'outline' }), 'pointer-events
 export function Pagination({ page, totalPages, hrefForPage }: PaginationProps) {
   if (totalPages <= 1) return null;
   return (
-    <nav aria-label="Paginação" className="mt-8 flex items-center justify-center gap-4">
+    <nav aria-label="Paginação" className="mt-12 flex items-center justify-center gap-4">
       {page > 1 ? (
         <Link href={hrefForPage(page - 1)} className={buttonVariants({ variant: 'outline' })}>
           Anterior
         </Link>
       ) : (
-        <span aria-disabled="true" className={disabledClass}>Anterior</span>
+        <span aria-disabled="true" className={disabledClass}>
+          Anterior
+        </span>
       )}
-      <span className="text-sm">
+      <span className="text-sm text-muted-foreground">
         Página {page} de {totalPages}
       </span>
       {page < totalPages ? (
@@ -29,7 +31,9 @@ export function Pagination({ page, totalPages, hrefForPage }: PaginationProps) {
           Próxima
         </Link>
       ) : (
-        <span aria-disabled="true" className={disabledClass}>Próxima</span>
+        <span aria-disabled="true" className={disabledClass}>
+          Próxima
+        </span>
       )}
     </nav>
   );

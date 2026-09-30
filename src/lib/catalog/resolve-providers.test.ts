@@ -21,7 +21,7 @@ describe('resolveProviderIds', () => {
 
 describe('removeWatched', () => {
   it('remove os filmes assistidos', () => {
-    const movies = [1, 2, 3].map((id) => ({ id, title: `F${id}`, posterPath: null, releaseYear: null, voteAverage: 0, overview: '' }));
+    const movies = [1, 2, 3].map((id) => ({ id, title: `F${id}`, backdropPath: null, posterPath: null, releaseYear: null, voteAverage: 0, overview: '' }));
     expect(removeWatched(movies, new Set([2])).map((m) => m.id)).toEqual([1, 3]);
   });
 });

@@ -10,11 +10,16 @@ import { getMovieWatchProviders } from '@/lib/tmdb/movies';
 import { listUserMovies } from '@/lib/user-data/repository';
 import { parseListTab, type MovieStatus } from '@/lib/user-data/schemas';
 import { getUserDb } from '@/lib/user-data/server';
+import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = { title: 'Minha lista' };
 
 const TABS: { status: MovieStatus; label: string; empty: string }[] = [
-  { status: 'want', label: 'Quero assistir', empty: 'Sua lista está vazia. Explore o catálogo e adicione filmes.' },
+  {
+    status: 'want',
+    label: 'Quero assistir',
+    empty: 'Sua lista está vazia. Adicione filmes com o botão Quero assistir.',
+  },
   { status: 'watched', label: 'Assistidos', empty: 'Nenhum filme marcado como assistido.' },
 ];
 
@@ -32,34 +37,53 @@ export default async function MyListPage({ searchParams }: PageProps) {
   const tab = parseListTab(params.tab);
   const page = parsePageParam(params.page);
   const { items, totalPages } = await listUserMovies(ctx.db, ctx.userId, tab, page);
-  const availability = await loadAvailability(items.map((m) => m.tmdbId), getMovieWatchProviders);
+  const availability = await loadAvailability(
+    items.map((m) => m.tmdbId),
+    getMovieWatchProviders,
+  );
   const current = TABS.find((t) => t.status === tab)!;
 
   return (
-    <>
-      <h1 className="mb-4 text-2xl font-bold">Minha lista</h1>
-      <nav aria-label="Abas da lista" className="mb-6 flex gap-2">
+    <div className="page-shell">
+      <h1 className="page-title">Minha lista</h1>
+      <nav aria-label="Abas da lista" className="mt-6 mb-8 flex gap-6 border-b">
         {TABS.map((t) => (
           <Link
             key={t.status}
             href={tabHref(t.status)}
             aria-current={t.status === tab ? 'page' : undefined}
-            className={buttonVariants({ variant: t.status === tab ? 'default' : 'outline' })}
+            className={cn(
+              '-mb-px border-b-2 pb-3 text-sm font-medium transition-colors',
+              t.status === tab
+                ? 'border-primary text-foreground'
+                : 'border-transparent text-muted-foreground hover:text-foreground',
+            )}
           >
             {t.label}
           </Link>
         ))}
       </nav>
       {items.length === 0 ? (
-        <p className="py-8 text-muted-foreground">{current.empty}</p>
+        <div className="py-12">
+          <p className="text-muted-foreground">{current.empty}</p>
+          {tab === 'want' && (
+            <Link href="/" className={buttonVariants({ className: 'mt-5 h-10 px-5' })}>
+              Explorar o catálogo
+            </Link>
+          )}
+        </div>
       ) : (
-        <ul className="space-y-3">
+        <ul className="grid gap-3 lg:grid-cols-2">
           {items.map((movie) => (
-            <UserMovieItem key={movie.tmdbId} movie={movie} availability={availability.get(movie.tmdbId)} />
+            <UserMovieItem
+              key={movie.tmdbId}
+              movie={movie}
+              availability={availability.get(movie.tmdbId)}
+            />
           ))}
         </ul>
       )}
       <Pagination page={page} totalPages={totalPages} hrefForPage={(p) => tabHref(tab, p)} />
-    </>
+    </div>
   );
 }

@@ -9,6 +9,7 @@ describe('toMovie', () => {
       id: 603,
       title: 'Matrix',
       posterPath: '/matrix.jpg',
+      backdropPath: null,
       releaseYear: 1999,
       voteAverage: 8.2,
       overview: 'Um hacker descobre a verdade.',

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Geist } from 'next/font/google';
+import { Archivo } from 'next/font/google';
 import type { ReactNode } from 'react';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
@@ -7,7 +7,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { UserMenu } from '@/components/user-menu';
 import './globals.css';
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-geist-sans' });
+const archivo = Archivo({ subsets: ['latin'], axes: ['wdth'], variable: '--font-archivo' });
 
 export const metadata: Metadata = {
   title: { default: 'Streaming Agora', template: '%s · Streaming Agora' },
@@ -16,12 +16,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-BR">
-      <body className={`${geist.variable} flex min-h-screen flex-col font-sans antialiased`}>
+    <html lang="pt-BR" className="dark">
+      <body
+        className={`${archivo.variable} flex min-h-screen flex-col bg-background font-sans antialiased`}
+      >
         <SiteHeader userSlot={<UserMenu />} />
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6">{children}</main>
+        <main className="flex-1">{children}</main>
         <SiteFooter />
-        <Toaster richColors />
+        <Toaster theme="dark" richColors />
       </body>
     </html>
   );

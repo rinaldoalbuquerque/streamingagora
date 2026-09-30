@@ -2,6 +2,7 @@ export interface Movie {
   id: number;
   title: string;
   posterPath: string | null;
+  backdropPath: string | null;
   releaseYear: number | null;
   voteAverage: number;
   overview: string;
@@ -44,7 +45,6 @@ export interface CastMember {
 export interface MovieDetails extends Movie {
   runtime: number | null;
   tagline: string | null;
-  backdropPath: string | null;
   genres: Genre[];
   cast: CastMember[];
   trailerKey: string | null;

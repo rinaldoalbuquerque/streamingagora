@@ -14,16 +14,23 @@ export default async function ProfilePage() {
   const ctx = await getUserDb();
   if (!ctx) redirect('/login?next=%2Fperfil');
 
-  const [allProviders, selected] = await Promise.all([getBrProviders(), getUserProviderIds(ctx.db, ctx.userId)]);
-  const providers = withSelectedProviders(allProviders.slice(0, PROFILE_PROVIDER_COUNT), allProviders, selected);
+  const [allProviders, selected] = await Promise.all([
+    getBrProviders(),
+    getUserProviderIds(ctx.db, ctx.userId),
+  ]);
+  const providers = withSelectedProviders(
+    allProviders.slice(0, PROFILE_PROVIDER_COUNT),
+    allProviders,
+    selected,
+  );
 
   return (
-    <>
-      <h1 className="mb-2 text-2xl font-bold">Meus streamings</h1>
-      <p className="mb-6 text-muted-foreground">
+    <div className="page-shell">
+      <h1 className="page-title">Meus streamings</h1>
+      <p className="mt-3 mb-8 max-w-[60ch] text-muted-foreground">
         Escolha os serviços que você assina. O catálogo vai abrir filtrado por eles.
       </p>
       <ProviderPicker providers={providers} initialSelected={selected} />
-    </>
+    </div>
   );
 }
